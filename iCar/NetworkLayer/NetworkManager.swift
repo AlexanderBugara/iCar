@@ -2,7 +2,7 @@ import Foundation
 
 protocol NetworkManaging {
     var isInProgress: Bool { get }
-    func fetch<T>(pageIndex: Int, itemsCount: Int, type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable
+    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable
 }
 
 final class NetworkManager {
@@ -15,22 +15,26 @@ final class NetworkManager {
 }
 
 extension NetworkManager: NetworkManaging {
-    func fetch<T>(pageIndex: Int, itemsCount: Int, type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable {
+    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable {
 
-        guard let url = API.apiURL(path: .manufacturers, params: API.params(pageIndex: pageIndex, itemsCount: itemsCount)) else {
+        guard let url = API.apiURL(path: path, params: queryParams) else {
             completion(.failure(.URLIsNil))
             return
         }
-        let task = urlSession?.dataTask(with: url) { data, response, error in
+
+        isInProgress = true
+        let task = urlSession?.dataTask(with: url) { [weak self] data, response, error in
             do {
                 guard let data = data else {
                     DispatchQueue.main.async {
+                        self?.isInProgress = false
                         completion(.failure(.DataIsNil))
                     }
                     return
                 }
                 let reult = try JSONDecoder().decode(T.self, from: data)
                 DispatchQueue.main.async {
+                    self?.isInProgress = false
                     completion(.success(reult))
                 }
             } catch {

@@ -1,13 +1,13 @@
 import UIKit
 
-final class ManufacturerViewController: UIViewController {
-    private let tableView: UITableView = {
+final class ManufacturerViewController: UIViewController, PagableViewController {
+    var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ManufacturerCell.self, forCellReuseIdentifier: Constants.manufacurerCellId)
         return tableView
     }()
 
-    let viewModel: ManufacturerViewModel
+    var viewModel: ManufacturerViewModel
 
     // MARK: Init
 
@@ -22,30 +22,6 @@ final class ManufacturerViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: Setup UI
-
-    private func setupUI() {
-        view.backgroundColor = .blue
-        view.addSubview(tableView)
-        navigationItem.title = viewModel.title
-        viewModel.delegate = self
-        tableView.dataSource = self
-        tableView.delegate = self
-    }
-
-    // MARK: Setup Layout
-
-    private func setupLayout() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        let constraints = [
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ]
-        NSLayoutConstraint.activate(constraints)
     }
 
     // MARK: View lifecircle
@@ -69,7 +45,7 @@ extension ManufacturerViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.manufacurerCellId, for: indexPath) as? ManufacturerCell else {
             return UITableViewCell()
         }
-        cell.update(viewModel: viewModel.cells?[indexPath.row])
+        cell.update(viewModel: viewModel.cells[indexPath.row])
         return cell
     }
 }
@@ -78,16 +54,17 @@ extension ManufacturerViewController: UITableViewDataSource {
 
 extension ManufacturerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
+        didSelect(indexPath: indexPath)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
+        didScroll(position: scrollView.contentOffset.y, scrollHeight: scrollView.frame.size.height)
     }
 }
 
-extension ManufacturerViewController: ManufacturerViewModelDelegate {
+extension ManufacturerViewController: ViewModallableDelegate {
     func reloadTable() {
+        tableView.tableFooterView = nil
         tableView.reloadData()
     }
 }

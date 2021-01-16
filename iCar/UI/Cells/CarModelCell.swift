@@ -1,6 +1,6 @@
 import UIKit
 
-final class ManufacturerCell: UITableViewCell {
+final class CarModelCell: UITableViewCell {
     private weak var label: UILabel?
 
     override func awakeFromNib() {
@@ -13,7 +13,7 @@ final class ManufacturerCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
-    func update(viewModel: ManufacturerViewModel.CellViewModel?) {
+    func update(viewModel: CarModelsViewModel.CellViewModel?) {
         backgroundColor = viewModel?.backgroundColor
         label?.text = viewModel?.titleLabelText
     }
@@ -29,6 +29,7 @@ final class ManufacturerCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(label)
         self.label = label
+        accessoryType = .disclosureIndicator
     }
 
     private func setupLayout() {
