@@ -9,24 +9,25 @@ protocol UIBuilder {
 
 // MARK: Bulder interface
 
-struct Builder {
-    static var manufacturers: Manufacturers { Manufacturers() }
-    static var carModels: CarModels { CarModels() }
+struct Builder<T: ViewModellable, U: ViewModellable> where T.PageType == CodablePage, T.CellViewModelType == ManufacturerViewModel.CellViewModel, U.PageType == CodablePage, U.CellViewModelType == CarModelsViewModel.CellViewModel {
+    static var manufacturers: Manufacturers<T> { Manufacturers() }
+    static var carModels: CarModels<U> { CarModels() }
 }
 
 extension Builder {
-    struct Manufacturers: UIBuilder {
-        var manufacturerViewModel: ManufacturerViewModel?
+    struct Manufacturers<ManufacturerViewModelType: ViewModellable> : UIBuilder where ManufacturerViewModelType.CellViewModelType == ManufacturerViewModel.CellViewModel, ManufacturerViewModelType.PageType == CodablePage {
+        var manufacturerViewModel: ManufacturerViewModelType?
         var networkManager: NetworkManaging?
         var navigationController: UINavigationController?
 
-        func build(completion: @escaping (ManufacturerViewController) -> Void) {
+        func build(completion: @escaping (ManufacturerViewController<ManufacturerViewModelType>) -> Void) {
 
             guard let networkManager = networkManager == nil ? NetworkManager() : networkManager else {
                 return
             }
 
-            guard let viewModel = manufacturerViewModel == nil ? ManufacturerViewModel(networkManager: networkManager, router: Router(navigationController: navigationController), path: .manufacturers) : manufacturerViewModel else {
+            let viewModel1: ManufacturerViewModelType? = ManufacturerViewModel(networkManager: networkManager, router: Router(navigationController: navigationController), path: .manufacturers) as? ManufacturerViewModelType
+            guard let viewModel = manufacturerViewModel == nil ? viewModel1 : manufacturerViewModel else {
                 return
             }
 
@@ -36,7 +37,7 @@ extension Builder {
             }
         }
     }
-    struct CarModels: UIBuilder {
+    struct CarModels<ModelsCarsViewModelType: ViewModellable>: UIBuilder where ModelsCarsViewModelType.CellViewModelType == CarModelsViewModel.CellViewModel, ModelsCarsViewModelType.PageType == CodablePage {
         var carViewModel: CarModelsViewModel?
         var networkManager: NetworkManaging?
         var navigationController: UINavigationController?

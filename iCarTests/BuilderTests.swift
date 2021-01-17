@@ -1,7 +1,7 @@
 import XCTest
 @testable import iCar
 
-final class UIBuilderTests: XCTestCase {
+final class BuilderTests: XCTestCase {
     override func setUpWithError() throws {
     }
 
@@ -10,7 +10,7 @@ final class UIBuilderTests: XCTestCase {
 
     func testCreateManufacturerViewController() throws {
         let expectation = XCTestExpectation(description: "Creation ManufacturerViewController in main queuq")
-        Builder.manufacturer.build { manufacturerViewController in
+        Builder<ManufacturerViewModel, CarModelsViewModel>.manufacturers.build { manufacturerViewController in
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
@@ -18,10 +18,9 @@ final class UIBuilderTests: XCTestCase {
 
     func testCreateManufacturerViewControllerWithCustomInjection() throws {
         let expectation = XCTestExpectation(description: "Creation ManufacturerViewController in main queuq")
-        var manufacturerBuilder = Builder.manufacturer
+        var manufacturerBuilder = Builder<MockManufacturerViewModel, CarModelsViewModel>.manufacturers
         manufacturerBuilder.manufacturerViewModel = MockManufacturerViewModel(networkManager: MockNetworkManager())
         manufacturerBuilder.build { manufacutrerViewController in
-            XCTAssertTrue(manufacutrerViewController.viewModel is MockManufacturerViewModel)
             XCTAssertTrue(manufacutrerViewController.viewModel.networkManager is MockNetworkManager)
             expectation.fulfill()
         }
@@ -30,30 +29,12 @@ final class UIBuilderTests: XCTestCase {
 
     func testCreateManufacturerViewControllerWithCustomNetworkManager() throws {
         let expectation = XCTestExpectation(description: "Creation ManufacturerViewController in main queuq")
-        var manufacturerBuilder = Builder.manufacturer
+        var manufacturerBuilder = Builder<ManufacturerViewModel, CarModelsViewModel>.manufacturers
         manufacturerBuilder.networkManager = MockNetworkManager()
         manufacturerBuilder.build { manufacutrerViewController in
-            XCTAssertTrue(manufacutrerViewController.viewModel is ManufacturerViewModel)
             XCTAssertTrue(manufacutrerViewController.viewModel.networkManager is MockNetworkManager)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
-    }
-}
-
-final class MockManufacturerViewModel: ManufacturerViewModellable {
-    var networkManager: NetworkManaging
-    init(networkManager: NetworkManaging) {
-        self.networkManager = networkManager
-    }
-    func setup() {
-    }
-}
-
-final class MockNetworkManager: NetworkManaging {
-    var isInProgress: Bool = false
-
-    func fetch(range: Range<Int>, queue: DispatchQueue?) {
-
     }
 }

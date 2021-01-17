@@ -1,14 +1,16 @@
 import UIKit
 
-protocol PagableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ViewModallableDelegate {
-    associatedtype T: ViewModallable
+protocol PagableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ViewModellableDelegate {
+    associatedtype T: ViewModellable
     var viewModel: T { get set }
     var tableView: UITableView { get }
+    var endReached: Bool { get set }
     init(viewModel: T)
     func setupUI()
     func setupLayout()
     func didScroll(position: CGFloat, scrollHeight: CGFloat)
     func didSelect(indexPath: IndexPath)
+    func checkEnd(_ indexPath: IndexPath)
 }
 
 extension PagableViewController {
@@ -17,17 +19,17 @@ extension PagableViewController {
 
     func setupUI() {
         view.backgroundColor = .blue
-        view.addSubview(tableView)
+        view.add([tableView])
         navigationItem.title = viewModel.title
         viewModel.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.rowHeight = Constants.rowHeight
     }
 
     // MARK: Setup Layout
 
     func setupLayout() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         let constraints = [
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -48,7 +50,8 @@ extension PagableViewController {
     }
 
     func didScroll(position: CGFloat, scrollHeight: CGFloat) {
-        if position > (tableView.contentSize.height - 100 - scrollHeight) && !viewModel.isLoading {
+        if position > (tableView.contentSize.height - 100 - scrollHeight) && !viewModel.isLoading && endReached == true && viewModel.isNewPageExist {
+            endReached = false
             tableView.tableFooterView = createSpinnerFooter()
             viewModel.nextPage()
         }
@@ -57,5 +60,11 @@ extension PagableViewController {
     func didSelect(indexPath: IndexPath) {
         viewModel.didSelect(indexPath: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func checkEnd(_ indexPath: IndexPath) {
+        if indexPath.row == viewModel.cells.count - 1 {
+            endReached = true
+        }
     }
 }

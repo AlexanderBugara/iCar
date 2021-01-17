@@ -33,8 +33,9 @@ struct API {
 }
 
 extension API {
-    enum Error: LocalizedError {
+    enum APIError: Error {
         case URLIsNil
         case DataIsNil
+        case WrongParameters
     }
 }

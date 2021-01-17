@@ -5,7 +5,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        var builder = Builder.manufacturers
+        var builder = Builder<ManufacturerViewModel, CarModelsViewModel>.manufacturers
         builder.navigationController = UINavigationController()
         builder.build { [unowned self] manufacurerViewController in
             builder.navigationController?.viewControllers = [manufacurerViewController]

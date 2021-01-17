@@ -1,7 +1,8 @@
 import UIKit
 
 final class ManufacturerCell: UITableViewCell {
-    private weak var label: UILabel?
+    private weak var title: UILabel?
+    private weak var value: UILabel?
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -15,32 +16,27 @@ final class ManufacturerCell: UITableViewCell {
 
     func update(viewModel: ManufacturerViewModel.CellViewModel?) {
         backgroundColor = viewModel?.backgroundColor
-        label?.text = viewModel?.titleLabelText
+        title?.text = viewModel?.titleLabelText
+        value?.text = viewModel?.rawTitle
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
-        setupLayout()
     }
 
     private func setupUI() {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(label)
-        self.label = label
-        accessoryType = .disclosureIndicator
-    }
+        let title = UILabel()
+        let value = UILabel()
+        value.textColor = .darkGray
+        value.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
 
-    private func setupLayout() {
-        guard let label = label else {
-            return
-        }
-        let constraints = [
-            label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
+        title.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        value.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        contentView.add([title, value], layout: .cell)
+        self.title = title
+        self.value = value
+        accessoryType = .disclosureIndicator
     }
 
     @available(*, unavailable)

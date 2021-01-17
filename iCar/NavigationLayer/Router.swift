@@ -2,7 +2,7 @@ import UIKit
 
 typealias Message = String
 
-struct Manufacturer {
+struct Manufacturer: Equatable {
     var name: String
     var manufacturerId: String
 }
@@ -22,7 +22,7 @@ final class Router: Routing {
     func next(_ action: RoutingAction) {
         switch action {
         case .showCarModels(let manufacturer):
-            var carModelsBuilder = Builder.carModels
+            var carModelsBuilder = Builder<ManufacturerViewModel, CarModelsViewModel>.carModels
             carModelsBuilder.manufacturer = manufacturer
             carModelsBuilder.navigationController = navigationController
             carModelsBuilder.build { [weak self] carModelsViewController in

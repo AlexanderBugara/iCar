@@ -1,20 +1,21 @@
 import UIKit
 
-final class ManufacturerViewController: UIViewController, PagableViewController {
+final class ManufacturerViewController<ViewModelType: ViewModellable> : UIViewController, PagableViewController, UITableViewDataSource where ViewModelType.PageType == CodablePage,
+ViewModelType.CellViewModelType == ManufacturerViewModel.CellViewModel {
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ManufacturerCell.self, forCellReuseIdentifier: Constants.manufacurerCellId)
         return tableView
     }()
 
-    var viewModel: ManufacturerViewModel
-
+    var viewModel: ViewModelType
+    var endReached: Bool = false
     // MARK: Init
 
     /// Initialization ManufacturerViewController with ManufacturerViewModellable
     /// - Returns : ManufacturerViewController
 
-    init(viewModel: ManufacturerViewModel) {
+    init(viewModel: ViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -32,11 +33,9 @@ final class ManufacturerViewController: UIViewController, PagableViewController 
         setupLayout()
         viewModel.setup()
     }
-}
 
-// MARK: UITableViewDataSource
+    // MARK: UITableViewDataSource
 
-extension ManufacturerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.itemsCount
     }
@@ -48,11 +47,13 @@ extension ManufacturerViewController: UITableViewDataSource {
         cell.update(viewModel: viewModel.cells[indexPath.row])
         return cell
     }
-}
 
-// MARK: UITableViewDelegate
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        checkEnd(indexPath)
+    }
 
-extension ManufacturerViewController: UITableViewDelegate {
+    // MARK: UITableViewDelegate
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelect(indexPath: indexPath)
     }
@@ -62,7 +63,7 @@ extension ManufacturerViewController: UITableViewDelegate {
     }
 }
 
-extension ManufacturerViewController: ViewModallableDelegate {
+extension ManufacturerViewController: ViewModellableDelegate {
     func reloadTable() {
         tableView.tableFooterView = nil
         tableView.reloadData()

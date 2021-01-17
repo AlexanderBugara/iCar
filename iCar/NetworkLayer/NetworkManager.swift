@@ -2,7 +2,7 @@ import Foundation
 
 protocol NetworkManaging {
     var isInProgress: Bool { get }
-    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable
+    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.APIError>) -> Void) where T : Decodable
 }
 
 final class NetworkManager {
@@ -15,7 +15,7 @@ final class NetworkManager {
 }
 
 extension NetworkManager: NetworkManaging {
-    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.Error>) -> Void) where T : Decodable {
+    func fetch<T>(path: Constants.Path, queryParams: [String: String], type: T.Type, completion: @escaping (Result<T,API.APIError>) -> Void) where T : Decodable {
 
         guard let url = API.apiURL(path: path, params: queryParams) else {
             completion(.failure(.URLIsNil))
@@ -38,7 +38,7 @@ extension NetworkManager: NetworkManaging {
                     completion(.success(reult))
                 }
             } catch {
-//              fatalError(error.localizedDescription)
+                completion(.failure(error as! API.APIError))
             }
         }
         task?.resume()

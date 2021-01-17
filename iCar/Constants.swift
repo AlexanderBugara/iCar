@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 enum Constants {
     static let manufacurerCellId = "manufacturer.cell.id"
@@ -7,6 +7,7 @@ enum Constants {
     static let page = "page"
     static let pageSize: String = "pageSize"
     static let itemsCount = 15
+    static let rowHeight: CGFloat = 44
     static let wa_key: String = "wa_key"
     static let wa_key_value: String = "coding-puzzle-client-449cc9d"
     static let manufacturer = "manufacturer"

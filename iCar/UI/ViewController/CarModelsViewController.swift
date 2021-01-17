@@ -2,6 +2,7 @@ import UIKit
 
 final class CarModelsViewController: UIViewController, PagableViewController {
     var viewModel: CarModelsViewModel
+    var endReached: Bool = false
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(CarModelCell.self, forCellReuseIdentifier: Constants.manufacurerCellId)
@@ -47,6 +48,10 @@ extension CarModelsViewController: UITableViewDataSource {
         cell.update(viewModel: viewModel.cells[indexPath.row])
         return cell
     }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        checkEnd(indexPath)
+    }
 }
 
 // MARK: UITableViewDelegate
@@ -61,7 +66,7 @@ extension CarModelsViewController: UITableViewDelegate {
     }
 }
 
-extension CarModelsViewController: ViewModallableDelegate {
+extension CarModelsViewController: ViewModellableDelegate {
     func reloadTable() {
         tableView.tableFooterView = nil
         tableView.reloadData()

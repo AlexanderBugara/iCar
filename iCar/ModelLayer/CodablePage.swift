@@ -5,7 +5,7 @@ struct KeyValue: Codable, Equatable {
     var value: String
 }
 
-struct CodablePage: Page, Equatable {
+struct CodablePage: Page, Equatable, Decodable {
     var page: Int?
     var pageSize: Int?
     var totalPageCount: Int?
@@ -28,7 +28,9 @@ struct CodablePage: Page, Equatable {
         self.pageSize = try container.decode(Int.self, forKey: .pageSize)
         self.totalPageCount = try container.decode(Int.self, forKey: .totalPageCount)
         let wkda = try container.decode([String: String].self, forKey: .wkda)
-        self.wkda = wkda.map { tuple in
+        self.wkda = wkda.sorted(by: { (first, second) -> Bool in
+            return first.value < second.value
+        }).map { tuple in
             KeyValue(name: tuple.value, value: tuple.key)
         }
     }

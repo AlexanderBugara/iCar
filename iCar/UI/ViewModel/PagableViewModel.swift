@@ -36,7 +36,7 @@ extension PagableViewModel {
         networkManager.fetch(path: path, queryParams: parameters, type: T.self) { [weak self] result in
             switch result {
             case .success(let page): self?.page = page
-            case .failure(let error): break
+            case .failure(_): break
             }
         }
     }

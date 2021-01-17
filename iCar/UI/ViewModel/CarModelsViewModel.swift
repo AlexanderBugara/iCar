@@ -6,7 +6,7 @@ protocol CarModelsViewModelDelegate: AnyObject {
 
 final class CarModelsViewModel {
     private(set) var networkManager: NetworkManaging
-    weak var delegate: ViewModallableDelegate?
+    weak var delegate: ViewModellableDelegate?
     private let router: Routing
     private let manufacturer: Manufacturer
     private(set) var cells = [CellViewModel]()
@@ -17,7 +17,7 @@ final class CarModelsViewModel {
                 return
             }
             let newCells = wkda.enumerated().map { (index, element) in
-                CellViewModel(rawTitle: element.name, index: cells.count-1+index)
+                CellViewModel(rawTitle: element.name, index: cells.count + index)
             }
             cells.append(contentsOf: newCells)
             delegate?.reloadTable()
@@ -34,8 +34,8 @@ final class CarModelsViewModel {
     }
 }
 
-extension CarModelsViewModel: ViewModallable {
-    var title: String { "Car models manufacturer: \(manufacturer.name)" }
+extension CarModelsViewModel: ViewModellable {
+    var title: String { "Manufacturer: \(manufacturer.name)" }
     func didSelect(indexPath: IndexPath) {
         let car = cells[indexPath.row]
         router.next(.showFinalMessage("Manufacturer: \(manufacturer.name), model: \(car.rawTitle)"))
@@ -55,8 +55,6 @@ extension CarModelsViewModel: PagableViewModel {
     struct CellViewModel: CellViewModellable {
         var rawTitle: String
         var index: Int
-        var titleLabelText: String {
-            "Model is: \(rawTitle)"
-        }
+        var titleLabelText = "Model is : "
     }
 }

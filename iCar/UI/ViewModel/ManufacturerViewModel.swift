@@ -1,9 +1,9 @@
 import UIKit
 
-final class ManufacturerViewModel: ViewModallable {
+final class ManufacturerViewModel: ViewModellable {
     private(set) var cells = [CellViewModel]()
     private(set) var networkManager: NetworkManaging
-    weak var delegate: ViewModallableDelegate?
+    weak var delegate: ViewModellableDelegate?
     private let router: Routing
     var path: Constants.Path?
     var page: CodablePage? {
@@ -11,8 +11,8 @@ final class ManufacturerViewModel: ViewModallable {
             guard let page = page, let wkda = page.wkda else {
                 return
             }
-            let newCells = wkda.enumerated().map { (index, element) in
-                CellViewModel(rawTitle: element.name, value: element.value, index: cells.count-1+index)
+            let newCells = wkda.enumerated().map { (index, element) -> CellViewModel in
+                CellViewModel(rawTitle: element.name, value: element.value, index: cells.count + index)
             }
             cells.append(contentsOf: newCells)
             delegate?.reloadTable()
@@ -48,6 +48,6 @@ extension ManufacturerViewModel: PagableViewModel {
         var rawTitle: String
         var value: String
         var index: Int
-        var titleLabelText: String { "Manufacturer is: \(rawTitle)" }
+        var titleLabelText = "Manufacturer is : "
     }
 }
