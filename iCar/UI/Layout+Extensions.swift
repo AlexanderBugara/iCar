@@ -23,8 +23,6 @@ extension UIView {
                 horizontalStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
                 horizontalStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
                 horizontalStack.centerYAnchor.constraint(equalTo: centerYAnchor)
-//                horizontalStack.topAnchor.constraint(equalTo: topAnchor),
-//                horizontalStack.bottomAnchor.constraint(equalTo: bottomAnchor)
             ]
             NSLayoutConstraint.activate(constraints)
         }
